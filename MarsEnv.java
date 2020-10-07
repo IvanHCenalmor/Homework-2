@@ -101,9 +101,9 @@ public class MarsEnv extends Environment {
 
             // initial location of agents
             try {
-                setAgPos(0, 0, 0);
+                setAgPos(0, random.nextInt(7),random.nextInt(7));
 
-                Location r2Loc = new Location(GSize/2, GSize/2);
+                Location r2Loc = new Location(random.nextInt(7), random.nextInt(7));
                 setAgPos(1, r2Loc);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -115,6 +115,8 @@ public class MarsEnv extends Environment {
             add(GARB, 1, 2);
             add(GARB, 0, GSize-2);
             add(GARB, GSize-1, GSize-1);
+			add(GARB,random.nextInt(7),random.nextInt(7));
+			add(GARB,random.nextInt(7),random.nextInt(7));
         }
 
         void nextSlot() throws Exception {
