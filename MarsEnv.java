@@ -19,6 +19,10 @@ public class MarsEnv extends Environment {
     public static final Term    pg = Literal.parseLiteral("pick(garb)");
     public static final Term    dg = Literal.parseLiteral("drop(garb)");
     public static final Term    bg = Literal.parseLiteral("burn(garb)");
+	
+	//New term form robot r3
+	public static final Term    nrs = Literal.parseLiteral("nextRandom(slot)");
+	
     public static final Literal g1 = Literal.parseLiteral("garbage(r1)");
     public static final Literal g2 = Literal.parseLiteral("garbage(r2)");
 
@@ -41,7 +45,9 @@ public class MarsEnv extends Environment {
         try {
             if (action.equals(ns)) {
                 model.nextSlot();
-            } else if (action.getFunctor().equals("move_towards")) {
+            } else if (action.equals(nrs)) {
+                model.nextRandomSlot();
+            }else if (action.getFunctor().equals("move_towards")) {
                 int x = (int)((NumberTerm)action.getTerm(0)).solve();
                 int y = (int)((NumberTerm)action.getTerm(1)).solve();
                 model.moveTowards(x,y);
@@ -144,6 +150,60 @@ public class MarsEnv extends Environment {
             setAgPos(1, getAgPos(1)); // just to draw it in the view
 			
         }
+		
+		void nextRandomSlot() throws Exception {
+			Location r3 = getAgPos(2);
+			
+			int movOption = random.nextInt(8);
+			
+			switch(movOption){
+				case 0:
+					r3.x++;
+					break;
+				case 1:
+					r3.x--;
+					break;
+				case 2:
+					r3.y++;
+					break;
+				case 3:
+					r3.y--;
+					break;
+				case 4:
+					r3.x++;
+					r3.y++;
+					break;
+				case 5:
+					r3.x++;
+					r3.y--;
+					break;
+				case 6:
+					r3.x--;
+					r3.y++;
+					break;
+				case 7:
+					r3.x--;
+					r3.y--;
+					break;
+			}
+			
+			// Now it will look if is out of the scenerio
+			if (r3.y == getHeight()) {
+                r3.y = 0;
+            }
+			if (r3.y == 0) {
+                r3.y = getHeight() - 1;
+            }
+			if (r3.x == getWidth()) {
+                r3.x = 0;
+            }
+			if (r3.x == 0) {
+				r3.x = getWidth() - 1;
+			}
+			
+			setAgPos(2, r3);
+            setAgPos(2, getAgPos(2)); // just to draw it in the view
+		}
 
         void moveTowards(int x, int y) throws Exception {
             Location r1 = getAgPos(0);
@@ -227,7 +287,7 @@ public class MarsEnv extends Environment {
                 g.setColor(Color.white);
             }
             super.drawString(g, x, y, defaultFont, label);
-            repaint();
+            //repaint();
         }
 
         public void drawGarb(Graphics g, int x, int y) {
