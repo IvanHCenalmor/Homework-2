@@ -73,12 +73,15 @@ public class MarsEnv extends Environment {
 
         Location r1Loc = model.getAgPos(0);
         Location r2Loc = model.getAgPos(1);
+		Location r3Loc = model.getAgPos(2);
 
         Literal pos1 = Literal.parseLiteral("pos(r1," + r1Loc.x + "," + r1Loc.y + ")");
         Literal pos2 = Literal.parseLiteral("pos(r2," + r2Loc.x + "," + r2Loc.y + ")");
+		Literal pos3 = Literal.parseLiteral("pos(r3," + r3Loc.x + "," + r3Loc.y + ")");
 
         addPercept(pos1);
         addPercept(pos2);
+		addPercept(pos3);
 
         if (model.hasObject(GARB, r1Loc)) {
             addPercept(g1);
@@ -97,14 +100,20 @@ public class MarsEnv extends Environment {
         Random random = new Random(System.currentTimeMillis());
 
         private MarsModel() {
-            super(GSize, GSize, 2);
+			//GrindWorldModel constructor -> (int width, int heigth, int numsOfAgents)
+            super(GSize, GSize, 3);
 
             // initial location of agents
             try {
                 setAgPos(0, random.nextInt(7),random.nextInt(7));
 
+				
                 Location r2Loc = new Location(random.nextInt(7), random.nextInt(7));
                 setAgPos(1, r2Loc);
+
+				// Lets put the thrid agent also in a random position 
+				setAgPos(2, random.nextInt(7),random.nextInt(7));
+				
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -208,6 +217,9 @@ public class MarsEnv extends Environment {
                     c = Color.orange;
                 }
             }
+			if (id == 2) {
+				c = Color.green;	
+			}
             super.drawAgent(g, x, y, c, -1);
             if (id == 0) {
                 g.setColor(Color.black);

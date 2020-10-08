@@ -101,9 +101,9 @@ public class MarsEnv extends Environment {
 
             // initial location of agents
             try {
-                setAgPos(0, 0, 0);
+                setAgPos(0, random.nextInt(7),random.nextInt(7));
 
-                Location r2Loc = new Location(GSize/2, GSize/2);
+                Location r2Loc = new Location(random.nextInt(7), random.nextInt(7));
                 setAgPos(1, r2Loc);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -115,21 +115,25 @@ public class MarsEnv extends Environment {
             add(GARB, 1, 2);
             add(GARB, 0, GSize-2);
             add(GARB, GSize-1, GSize-1);
+			add(GARB,random.nextInt(7),random.nextInt(7));
+			add(GARB,random.nextInt(7),random.nextInt(7));
         }
 
         void nextSlot() throws Exception {
             Location r1 = getAgPos(0);
-            r1.x++;
-            if (r1.x == getWidth()) {
-                r1.x = 0;
-                r1.y++;
+			r1.y++;
+			if (r1.y == getHeight()) {
+                r1.y = 0;
+                r1.x++;
             }
             // finished searching the whole grid
-            if (r1.y == getHeight()) {
-                return;
+            if (r1.x == getWidth()) {
+                r1.x=0;
+				r1.y=0;
             }
             setAgPos(0, r1);
             setAgPos(1, getAgPos(1)); // just to draw it in the view
+			
         }
 
         void moveTowards(int x, int y) throws Exception {
