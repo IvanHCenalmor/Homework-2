@@ -4,5 +4,16 @@
 
 /* Initial goal */
 	
+!createGarbage(slots).
+
 /* Plans */
+
++!createGarbage(slots) : not garbage(r3)
+	<- putRandGarb(slot);
+	   nextRandom(slot);
+	   !createGarbage(slots).
++!createGarbage(slots).
+
+
+
 

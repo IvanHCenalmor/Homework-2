@@ -8,9 +8,12 @@
 
 /* Plans */
 
-+!createGarbage(slots) : true
-	<- nextRandom(slot);
++!createGarbage(slots) : not garbage(r3)
+	<- putRandGarb(slot);
+		nextRandom(slot);
 	   !createGarbage(slots).
 +!createGarbage(slots).
+
+
 
 
