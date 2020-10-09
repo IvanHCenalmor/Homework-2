@@ -22,9 +22,8 @@ public class MarsEnv extends Environment {
 	
 	//New terms for robot r3
 	public static final Term    nrs = Literal.parseLiteral("nextRandom(slot)");
-	public static final Term    nrs = Literal.parseLiteral("putRandGarb(slot)");
+	public static final Term    prg = Literal.parseLiteral("putRandGarb(slot)");
 
-	
     public static final Literal g1 = Literal.parseLiteral("garbage(r1)");
     public static final Literal g2 = Literal.parseLiteral("garbage(r2)");
 
@@ -49,7 +48,9 @@ public class MarsEnv extends Environment {
                 model.nextSlot();
             } else if (action.equals(nrs)) {
                 model.nextRandomSlot();
-            }else if (action.getFunctor().equals("move_towards")) {
+            } else if (action.equals(prg)) {
+                model.putRandGarb();
+            } else if (action.getFunctor().equals("move_towards")) {
                 int x = (int)((NumberTerm)action.getTerm(0)).solve();
                 int y = (int)((NumberTerm)action.getTerm(1)).solve();
                 model.moveTowards(x,y);
@@ -193,13 +194,13 @@ public class MarsEnv extends Environment {
 			if (r3.y == getHeight()) {
                 r3.y = 0;
             }
-			if (r3.y == 0) {
+			if (r3.y == -1) {
                 r3.y = getHeight() - 1;
             }
 			if (r3.x == getWidth()) {
                 r3.x = 0;
             }
-			if (r3.x == 0) {
+			if (r3.x == -1) {
 				r3.x = getWidth() - 1;
 			}
 			
@@ -241,6 +242,13 @@ public class MarsEnv extends Environment {
                 add(GARB, getAgPos(0));
             }
         }
+		
+		void putRandGarb() {
+			if (random.nextInt(10) == 0) {
+                add(GARB, getAgPos(2));
+			}
+		}
+		
         void burnGarb() {
             // r2 location has garbage
             if (model.hasObject(GARB, getAgPos(1))) {

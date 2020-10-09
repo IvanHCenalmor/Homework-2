@@ -104,6 +104,7 @@ public class MarsEnv extends Environment {
 
         public static final int MErr = 2; // max error in pick garb
         int nerr; // number of tries of pick garb
+		int nberr; //number of tries of burning the garb
         boolean r1HasGarb = false; // whether r1 is carrying garbage or not
 
         Random random = new Random(System.currentTimeMillis());
@@ -249,11 +250,24 @@ public class MarsEnv extends Environment {
 			}
 		}
 		
-        void burnGarb() {
+        /* Old burnGarb function */
+		/*void burnGarb() {
             // r2 location has garbage
             if (model.hasObject(GARB, getAgPos(1))) {
                 remove(GARB, getAgPos(1));
             }
+        }*/
+		
+		void burnGarb() {
+            // r2 location has garbage
+            if (model.hasObject(GARB, getAgPos(1))) {
+				if (random.nextBoolean() || nberr == MErr) {
+					remove(GARB, getAgPos(1));
+					nberr = 0;
+				} else {
+					nberr++;
+				}
+			}
         }
     }
 
