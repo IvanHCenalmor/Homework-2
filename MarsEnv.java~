@@ -12,8 +12,9 @@ import java.util.logging.Logger;
 
 public class MarsEnv extends Environment {
 
-    public static final int GSize = 7; // grid size
+    public static final int GSize = 10; // grid size
     public static final int GARB  = 16; // garbage code in grid model
+	public static final int COAL = 24; // coal code in grid model
 
     public static final Term    ns = Literal.parseLiteral("next(slot)");
     public static final Term    pg = Literal.parseLiteral("pick(garb)");
@@ -104,6 +105,7 @@ public class MarsEnv extends Environment {
 
         public static final int MErr = 2; // max error in pick garb
         int nerr; // number of tries of pick garb
+		int nberr; //number of tries of burning the garb
         boolean r1HasGarb = false; // whether r1 is carrying garbage or not
 
         Random random = new Random(System.currentTimeMillis());
@@ -127,6 +129,9 @@ public class MarsEnv extends Environment {
                 e.printStackTrace();
             }
 
+			//initial location of coal
+			/*add(COAL, 0, 0);*/
+			
             // initial location of garbage
             add(GARB, 3, 0);
             add(GARB, GSize-1, 0);
@@ -135,6 +140,8 @@ public class MarsEnv extends Environment {
             add(GARB, GSize-1, GSize-1);
 			add(GARB,random.nextInt(7),random.nextInt(7));
 			add(GARB,random.nextInt(7),random.nextInt(7));
+			
+			
         }
 
         void nextSlot() throws Exception {
@@ -249,11 +256,24 @@ public class MarsEnv extends Environment {
 			}
 		}
 		
-        void burnGarb() {
+        /* Old burnGarb function */
+		/*void burnGarb() {
             // r2 location has garbage
             if (model.hasObject(GARB, getAgPos(1))) {
                 remove(GARB, getAgPos(1));
             }
+        }*/
+		
+		void burnGarb() {
+            // r2 location has garbage
+            if (model.hasObject(GARB, getAgPos(1))) {
+				if (random.nextBoolean() || nberr == MErr) {
+					remove(GARB, getAgPos(1));
+					nberr = 0;
+				} else {
+					nberr++;
+				}
+			}
         }
     }
 
@@ -270,9 +290,13 @@ public class MarsEnv extends Environment {
         @Override
         public void draw(Graphics g, int x, int y, int object) {
             switch (object) {
-            case MarsEnv.GARB:
-                drawGarb(g, x, y);
-                break;
+				case MarsEnv.COAL:
+					drawCoal(g, x, y);
+					break;
+				case MarsEnv.GARB:
+					drawGarb(g, x, y);
+					break;
+		
             }
         }
 
@@ -306,5 +330,10 @@ public class MarsEnv extends Environment {
             drawString(g, x, y, defaultFont, "G");
         }
 
+		public void drawCoal(Graphics g, int x, int y) {
+			super.drawObstacle(g, x, y);
+            g.setColor(Color.red);
+            drawString(g, x, y, defaultFont, "C");
+		}
     }
 }

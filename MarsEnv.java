@@ -12,8 +12,9 @@ import java.util.logging.Logger;
 
 public class MarsEnv extends Environment {
 
-    public static final int GSize = 7; // grid size
+    public static final int GSize = 10; // grid size
     public static final int GARB  = 16; // garbage code in grid model
+	public static final int COAL = 8; // coal code in grid model
 
     public static final Term    ns = Literal.parseLiteral("next(slot)");
     public static final Term    pg = Literal.parseLiteral("pick(garb)");
@@ -26,6 +27,7 @@ public class MarsEnv extends Environment {
 
     public static final Literal g1 = Literal.parseLiteral("garbage(r1)");
     public static final Literal g2 = Literal.parseLiteral("garbage(r2)");
+    public static final Literal g3 = Literal.parseLiteral("garbage(r3)");
 
     static Logger logger = Logger.getLogger(MarsEnv.class.getName());
 
@@ -115,27 +117,33 @@ public class MarsEnv extends Environment {
 
             // initial location of agents
             try {
-                setAgPos(0, random.nextInt(7),random.nextInt(7));
+                setAgPos(0, random.nextInt(GSize),random.nextInt(GSize));
 
 				
-                Location r2Loc = new Location(random.nextInt(7), random.nextInt(7));
+                Location r2Loc = new Location(random.nextInt(GSize), random.nextInt(7));
                 setAgPos(1, r2Loc);
 
 				// Lets put the thrid agent also in a random position 
-				setAgPos(2, random.nextInt(7),random.nextInt(7));
+				setAgPos(2, random.nextInt(GSize),random.nextInt(GSize));
 				
             } catch (Exception e) {
                 e.printStackTrace();
             }
 
+			//initial location of coal
+			add(COAL, 0, 0);
+			add(COAL, 1, 1);
+			
             // initial location of garbage
             add(GARB, 3, 0);
             add(GARB, GSize-1, 0);
             add(GARB, 1, 2);
             add(GARB, 0, GSize-2);
             add(GARB, GSize-1, GSize-1);
-			add(GARB,random.nextInt(7),random.nextInt(7));
-			add(GARB,random.nextInt(7),random.nextInt(7));
+			add(GARB,random.nextInt(GSize),random.nextInt(GSize));
+			add(GARB,random.nextInt(GSize),random.nextInt(GSize));
+			
+			
         }
 
         void nextSlot() throws Exception {
@@ -284,9 +292,13 @@ public class MarsEnv extends Environment {
         @Override
         public void draw(Graphics g, int x, int y, int object) {
             switch (object) {
-            case MarsEnv.GARB:
-                drawGarb(g, x, y);
-                break;
+				case MarsEnv.COAL:
+					drawCoal(g, x, y);
+					break;
+				case MarsEnv.GARB:
+					drawGarb(g, x, y);
+					break;
+		
             }
         }
 
@@ -320,5 +332,10 @@ public class MarsEnv extends Environment {
             drawString(g, x, y, defaultFont, "G");
         }
 
+		public void drawCoal(Graphics g, int x, int y) {
+			super.drawObstacle(g, x, y);
+            g.setColor(Color.red);
+            drawString(g, x, y, defaultFont, "C");
+		}
     }
 }
