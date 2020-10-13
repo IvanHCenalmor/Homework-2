@@ -2,16 +2,16 @@
 
 /* Initial beliefs */
 
-at(P) :- pos(P,X,Y) & pos(r4,X,Y).
+//at(P) :- pos(P,X,Y) & pos(r4,X,Y).
 
 /* Initial goal */
 
-!check(slots).
+//!check(slots).
 
 /* Plans */
-
+/*
 +!check(slots) : not coal(r4)
-   <- next4(slot);
+   <- next(slot);
       !check(slots).
 +!check(slots).
 
@@ -33,12 +33,17 @@ at(P) :- pos(P,X,Y) & pos(r4,X,Y).
       !check(slots).
 
 +!take(S,L) : true
-   <- pick(S);
+   <- !ensure_pick(S);
       !at(L);
       drop(S).
 
++!ensure_pick(S) : coal(r4)
+   <- pick(coal);
+      !ensure_pick(S).
++!ensure_pick(_).
+
 +!at(L) : at(L).
 +!at(L) <- ?pos(L,X,Y);
-           move_towards_r4(X,Y);
+           move_towards(X,Y);
            !at(L).
-
+*/
