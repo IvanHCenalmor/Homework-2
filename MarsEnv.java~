@@ -153,11 +153,9 @@ public class MarsEnv extends Environment {
 			add(COAL, 1, 1);
 			
             // initial location of garbage
-            add(GARB, 3, 0);
-            add(GARB, GSize-1, 0);
-            add(GARB, 1, 2);
-            add(GARB, 0, GSize-2);
-            add(GARB, GSize-1, GSize-1);
+            add(GARB,random.nextInt(GSize),random.nextInt(GSize));
+			add(GARB,random.nextInt(GSize),random.nextInt(GSize));
+			add(GARB,random.nextInt(GSize),random.nextInt(GSize));
 			add(GARB,random.nextInt(GSize),random.nextInt(GSize));
 			add(GARB,random.nextInt(GSize),random.nextInt(GSize));
 			
