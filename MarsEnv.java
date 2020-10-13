@@ -28,6 +28,12 @@ public class MarsEnv extends Environment {
     public static final Literal g1 = Literal.parseLiteral("garbage(r1)");
     public static final Literal g2 = Literal.parseLiteral("garbage(r2)");
     public static final Literal g3 = Literal.parseLiteral("garbage(r3)");
+	
+	//robot 4
+	public static final Literal ncs = Literal.parseLiteral("nextC(slot)");
+	public static final Term    pc = Literal.parseLiteral("pick(coal)");
+    public static final Term    dc = Literal.parseLiteral("drop(coal)");
+	
 
     static Logger logger = Logger.getLogger(MarsEnv.class.getName());
 
@@ -62,7 +68,11 @@ public class MarsEnv extends Environment {
                 model.dropGarb();
             } else if (action.equals(bg)) {
                 model.burnGarb();
-            } else {
+            }else if (action.equals(pc)){
+				model.pickCoal();
+			}else if (action.equals(dc)){
+				model.dropCoal();
+			}else {
                 return false;
             }
         } catch (Exception e) {
@@ -85,14 +95,17 @@ public class MarsEnv extends Environment {
         Location r1Loc = model.getAgPos(0);
         Location r2Loc = model.getAgPos(1);
 		Location r3Loc = model.getAgPos(2);
+		Location r4Loc = model.getAgPos(3);
 
         Literal pos1 = Literal.parseLiteral("pos(r1," + r1Loc.x + "," + r1Loc.y + ")");
         Literal pos2 = Literal.parseLiteral("pos(r2," + r2Loc.x + "," + r2Loc.y + ")");
 		Literal pos3 = Literal.parseLiteral("pos(r3," + r3Loc.x + "," + r3Loc.y + ")");
+		Literal pos4 = Literal.parseLiteral("pos(r4," + r4Loc.x + "," + r4Loc.y + ")");
 
         addPercept(pos1);
         addPercept(pos2);
 		addPercept(pos3);
+		addPercept(pos4);
 
         if (model.hasObject(GARB, r1Loc)) {
             addPercept(g1);
@@ -107,7 +120,7 @@ public class MarsEnv extends Environment {
         public static final int MErr = 2; // max error in pick garb
         int nerr; // number of tries of pick garb
 		int nberr; //number of tries of burning the garb
-        boolean r1HasGarb = false; // whether r1 is carrying garbage or not
+        boolean r1HasGarb = false,r4HasCoal = false; // whether r1 is carrying garbage or not
 
         Random random = new Random(System.currentTimeMillis());
 
@@ -125,6 +138,8 @@ public class MarsEnv extends Environment {
 
 				// Lets put the thrid agent also in a random position 
 				setAgPos(2, random.nextInt(GSize),random.nextInt(GSize));
+				
+				setAgPos(3,0,0);
 				
             } catch (Exception e) {
                 e.printStackTrace();
@@ -162,6 +177,22 @@ public class MarsEnv extends Environment {
             setAgPos(1, getAgPos(1)); // just to draw it in the view
 			
         }
+		
+		void nextSlotC() throws Exception{
+			Location r4 = getAgPos(3);
+			r4.x++;
+			if (r4.x == getWidth()) {
+                r4.x = 0;
+                r4.y++;
+            }
+            // finished searching the whole grid
+            if (r4.y == getHeight()) {
+                r4.x=0;
+				r4.y=0;
+            }
+            setAgPos(3, r4);
+            setAgPos(3, getAgPos(3)); // just to draw it in the view
+		}
 		
 		void nextRandomSlot() throws Exception {
 			Location r3 = getAgPos(2);
@@ -257,6 +288,19 @@ public class MarsEnv extends Environment {
                 add(GARB, getAgPos(2));
 			}
 		}
+		void pickCoal() {
+            if (model.hasObject(COAL, getAgPos(3))) {
+                    remove(COAL, getAgPos(3));
+                    r4HasCoal = true;
+            }
+        }
+        void dropCoal() {
+            if (r4HasCoal) {
+                r4HasCoal = false;
+                add(GARB, getAgPos(3));
+            }
+        }
+		
 		
         /* Old burnGarb function */
 		/*void burnGarb() {
@@ -268,9 +312,10 @@ public class MarsEnv extends Environment {
 		
 		void burnGarb() {
             // r2 location has garbage
-            if (model.hasObject(GARB, getAgPos(1))) {
+            if (model.hasObject(GARB, getAgPos(1)) && model.hasObject(COAL,getAgPos(1))) {
 				if (random.nextBoolean() || nberr == MErr) {
 					remove(GARB, getAgPos(1));
+					remove(COAL, getAgPos(1));
 					nberr = 0;
 				} else {
 					nberr++;
